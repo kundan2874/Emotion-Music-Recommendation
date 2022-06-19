@@ -6,7 +6,7 @@ import bcrypt
 
 app = Flask(__name__)
 #connoct to your Mongo DB database
-client = pymongo.MongoClient("mongodb+srv://Richard:Password@cluster0-xth9g.mongodb.net/Richard?retryWrites=true&w=majority")
+client = pymongo.MongoClient("mongodb+srv://root:pass@cluster0.935wg.mongodb.net/test")
 
 #get the database name
 db = client.get_database('total_records')
@@ -17,7 +17,7 @@ headings = ("Name","Album","Artist")
 df1 = music_rec()
 df1 = df1.head(15)
 @app.route('/dashboard')
-def index():
+def dashboard():
     print(df1.to_json(orient='records'))
     return render_template('index.html', headings=headings, data=df1)
 
@@ -30,7 +30,7 @@ def gen(camera):
 
 #assign URLs to have a particular route 
 @app.route("/register", methods=['post', 'get'])
-def index():
+def register():
     message = ''
     #if method post in index
     if "email" in session:
@@ -64,7 +64,7 @@ def index():
             user_data = records.find_one({"email": email})
             new_email = user_data['email']
             #if registered redirect to logged in as the registered user
-            return render_template('logged_in.html', email=new_email)
+            return render_template('dashboard.html', email=new_email)
     return render_template('register.html')
 
 
@@ -87,10 +87,10 @@ def login():
             #encode the password and check if it matches
             if bcrypt.checkpw(password.encode('utf-8'), passwordcheck):
                 session["email"] = email_val
-                return redirect(url_for('logged_in'))
+                return redirect(url_for('dashboard'))
             else:
                 if "email" in session:
-                    return redirect(url_for("logged_in"))
+                    return redirect(url_for("dashboard"))
                 message = 'Wrong password'
                 return render_template('login.html', message=message)
         else:
@@ -107,7 +107,15 @@ def video_feed():
 @app.route('/t')
 def gen_table():
     return df1.to_json(orient='records')
-
+    
+@app.route("/logout", methods=["POST", "GET"])
+def logout():
+    if "email" in session:
+        session.pop("email", None)
+        return render_template("signout.html")
+    else:
+        return render_template('index1.html')
 if __name__ == '__main__':
+    app.secret_key = 'super secret key'
     app.debug = True
     app.run()
