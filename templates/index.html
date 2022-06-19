@@ -1,7 +1,7 @@
-<html>
+  <html>
 
 <head>
-  <title>Emotion Music Recommendation</title>
+  <title>Recovery From Distress Using Music</title>
 
   <style>
     img {
@@ -37,7 +37,7 @@
         font-family: 'Bigelow Rules';
         font-size: 72px;
         color: #0ccac4;">
-        Mood Music Recommender
+        Recovery from stress using music
       </h1>
 
     </div>
@@ -46,7 +46,7 @@
         width: 50%;
         float: left;
         height: 100%%;
-      
+
         margin: auto;
         padding-bottom:25px;
         text-align: center;
@@ -62,14 +62,14 @@
         margin: 10px;
         text-align: center;
         width: 51%%;
-      "> 
-    
+      ">
+
       <img class ="outer-shadow" id="bg" class="center img-fluid" src="{{ url_for('video_feed') }}" />
-  
+
     </div>
 
     </div>
-    
+
     <div style="
         width: 50%;
         float: left;
@@ -83,10 +83,10 @@
           font-size: 36px;
           color: #0ccac4;">Song Recommendations
         </h2>
-      
+
      </div>
 
-    <div class ="outer-shadow" id="ResultArea" style="
+    <div class ="outer-shadow"  style="
         padding: 15px;
         width: 49%;
         float: left;
@@ -95,6 +95,22 @@
         text-align: center;
         margin-bottom:15px;
       ">
+      <table>
+        <tr>
+          <td><b>Name</b></td>
+          <td><b>Album</b></td>
+          <td><b>Artist</b></td>
+        </tr>
+        {% for key,value in data.iterrows() %}
+          
+              <tr>
+                <td><a style="text-decoration: none" target="_blank" href={{'https://www.youtube.com/results?search_query=' + value['Name'].replace(" ", "+") + "+" + value['Artist'].replace(" ", "+") }}>{{ value['Name'] }}</a></td>
+                <td><a style="text-decoration: none" target="_blank" href={{'https://www.youtube.com/results?search_query=' + value['Album'].replace(" ", "+") }}>{{ value['Album'] }}</a></td>
+                <td><a style="text-decoration: none" target="_blank" href={{'https://www.youtube.com/results?search_query=' + value['Artist'].replace(" ", "+") }}>{{ value['Artist'] }}</a></td>
+              </tr>
+          </a>
+        {% endfor %}
+      </table>
     </div>
 
   </div>
@@ -111,7 +127,7 @@
             console.log(data,"DATA");
           });
         return false;
-    }, 100);
+    }, 2000);
 
     function CreateHtmlTable(data) {
       //Clear result div
@@ -119,7 +135,7 @@
       //Crate table html tag
       var table = $("<table class = 'table table-striped table-light table-bordered table-hover table-sm table-responsive' id=DynamicTable></table>").appendTo("#ResultArea");
       //Create table header row
-      var rowHeader = 
+      var rowHeader =
       $("<tr></tr>").appendTo(table);
       $("<td></td>").text("Name").appendTo(rowHeader);
       $("<td></td").text("Album").appendTo(rowHeader);
@@ -128,11 +144,17 @@
       $.each(data, function (i, value) {
 
           //Create new row for each record
-          var row = 
-          $("<tr></tr>").appendTo(table);
+        
+          
+          var row = $("<tr></tr>").appendTo(table)
+          row.click(()=>{
+            console.log("hello")
+          })
           $("<td></td>").text(value.Name).appendTo(row);
           $("<td></td>").text(value.Album).appendTo(row);
           $("<td></td>").text(value.Artist).appendTo(row);
+          // var col = $("<td></td>").appendTo(row)
+          // $("<a>Link</a>").href("google.com").appendTo(col)
       });
     }
 
